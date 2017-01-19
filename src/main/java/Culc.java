@@ -19,7 +19,7 @@ public class Culc {
         Scanner portDest = new Scanner(System.in);
         list.add(portDest.next());
 
-        long a = DAO.getDaoInstance().getSocket(list.get(0), list.get(1), list.get(2));
+        long a = DAO.getDaoInstance().getSocketThreeArg(list.get(0), list.get(1), list.get(2));
         System.out.println("Количество байт с этого сокета " + a + " байт");
 
         long b = DAO.getDaoInstance().getAllBytes();
@@ -27,5 +27,6 @@ public class Culc {
 
         float c = DAO.getDaoInstance().getAnomaly(b, a);
         System.out.println("Процент трафика " + c + " %");
+
     }
 }

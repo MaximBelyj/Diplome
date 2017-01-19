@@ -20,8 +20,10 @@ public class DAO {
     * подключение к БД + запросы
     */
 
-     private final static String QUERY_SELECT = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ? AND destport = ?;";
-     private final static String QUERY_SELECT_ALL_BYTES = "SELECT SUM(bytes) as max FROM ipcaddump;";
+     private final static String QUERY_SELECT_1 = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ? AND destport = ?;";
+    private final static String QUERY_SELECT_2 = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ?;";
+
+    private final static String QUERY_SELECT_ALL_BYTES = "SELECT SUM(bytes) as max FROM ipcaddump;";
 
 
      private static Connection connection;
@@ -60,12 +62,29 @@ public class DAO {
     *  метод по извлечению байтов из БД
     */
 
-    public  <E extends Long> long getSocket(String IpSource, String IpDestination, String PortDestination) throws SQLException {
+    public  <E extends Long> long getSocketThreeArg(String IpSource, String IpDestination, String PortDestination) throws SQLException {
 
-        preparedStatement = connection.prepareStatement(QUERY_SELECT);
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_1);
         preparedStatement.setString(1, IpSource);
         preparedStatement.setString(2, IpDestination);
         preparedStatement.setString(3, PortDestination);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()){
+
+            sumChooseBytes = resultSet.getLong("max");
+
+        }
+
+        return sumChooseBytes;
+    }
+
+    public  <E extends Long> long getSocketTwoArg(String IpSource, String IpDestination) throws SQLException {
+
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_2);
+        preparedStatement.setString(1, IpSource);
+        preparedStatement.setString(2, IpDestination);
 
         ResultSet resultSet = preparedStatement.executeQuery();
 
