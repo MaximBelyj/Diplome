@@ -30,11 +30,11 @@ class Culculator {
         return sum;
     }
 
-     static void showResult(List<Long> list){
+     static void showResult(double b, List<Long> list){
 
-        for (double t = 1; t <= 100; t++) {
+        for (double t = 1; t <= b; t++) {
             for (double a = 1; a <= 15; a++) {
-                double res = Culculator.culcWevlet(a, t, list);
+                double res = Culculator.culcWevlet(a, b, list);
                 System.out.println(res);
                 if (a == 15){
                     System.out.println("t= " + t);

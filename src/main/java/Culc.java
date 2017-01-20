@@ -19,19 +19,25 @@ public class Culc {
         Scanner portDest = new Scanner(System.in);
         list.add(portDest.next());
 
-        /*long a = DAO.getDaoInstance().getSumBytes3Args(list.get(0), list.get(1), list.get(2));
+        long a = DAO.getDaoInstance().getSumBytes3Args(list.get(0), list.get(1), list.get(2));
         System.out.println("Количество байт с этого сокета " + a + " байт");
 
         long b = DAO.getDaoInstance().getAllBytes(list.get(2));
         System.out.println("Количество байт за время мониторинга " + b + " байт");
 
         float c = DAO.getDaoInstance().getAnomaly(b, a);
-        System.out.println("Процент трафика " + c + " %");*/
+        System.out.println("Процент трафика " + c + " %");
 
-        List<Long> traffic = DAO.getDaoInstance().getBytes(list.get(0), list.get(1), list.get(2));
+        if (c > 10.00) {
 
-        Culculator.showResult(traffic);
-      //  Culculator.showResult();
+            List<Long> traffic = DAO.getDaoInstance().getBytes(list.get(0), list.get(1), list.get(2));
+            Culculator.showResult(traffic.size(), traffic);
+        }
 
+        else {
+
+            System.out.println("Аномалий не обнаружено.");
+
+        }
     }
 }
