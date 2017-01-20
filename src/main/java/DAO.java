@@ -20,15 +20,14 @@ public class DAO {
     * подключение к БД + запросы
     */
 
-     private final static String QUERY_SELECT_1 = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ? AND destport = ?;";
-    private final static String QUERY_SELECT_2 = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ?;";
-
-    private final static String QUERY_SELECT_ALL_BYTES = "SELECT SUM(bytes) as max FROM ipcaddump;";
+     private final static String QUERY_SELECT_SUM_CHOOSE = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ? AND destport = ?;";
+     private final static String QUERY_SELECT_SUM_ALL = "SELECT SUM(bytes) as max FROM ipcaddump WHERE sourceip = ? AND destip = ?;";
+     private final static String QUERY_SELECT_BYTES = "SELECT bytes FROM ipcaddump WHERE sourceip = ? AND destip = ? AND destport = ?;";
+     private final static String QUERY_SELECT_ALL_BYTES = "SELECT SUM(bytes) as max FROM ipcaddump WHERE destport = ?;";
 
 
      private static Connection connection;
      private static PreparedStatement preparedStatement;
-     private static Statement statement;
 
      private static final DAO DAO_INSTANCE = new DAO();
 
@@ -62,9 +61,9 @@ public class DAO {
     *  метод по извлечению байтов из БД
     */
 
-    public  <E extends Long> long getSocketThreeArg(String IpSource, String IpDestination, String PortDestination) throws SQLException {
+    public  <E extends Long> long getSumBytes3Args(String IpSource, String IpDestination, String PortDestination) throws SQLException {
 
-        preparedStatement = connection.prepareStatement(QUERY_SELECT_1);
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_SUM_CHOOSE);
         preparedStatement.setString(1, IpSource);
         preparedStatement.setString(2, IpDestination);
         preparedStatement.setString(3, PortDestination);
@@ -80,9 +79,9 @@ public class DAO {
         return sumChooseBytes;
     }
 
-    public  <E extends Long> long getSocketTwoArg(String IpSource, String IpDestination) throws SQLException {
+    public  <E extends Long> long getSumBytes2Arg(String IpSource, String IpDestination) throws SQLException {
 
-        preparedStatement = connection.prepareStatement(QUERY_SELECT_2);
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_SUM_ALL);
         preparedStatement.setString(1, IpSource);
         preparedStatement.setString(2, IpDestination);
 
@@ -97,10 +96,34 @@ public class DAO {
         return sumChooseBytes;
     }
 
-    public  <E extends Long> long getAllBytes() throws SQLException {
+    public List<Long> getBytes(String IpSource, String IpDestination, String PortDestination) throws SQLException {
 
-        statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(QUERY_SELECT_ALL_BYTES);
+        List<Long> listBytes = new ArrayList<Long>();
+        long bytes = 0;
+
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_BYTES);
+        preparedStatement.setString(1, IpSource);
+        preparedStatement.setString(2, IpDestination);
+        preparedStatement.setString(3, PortDestination);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+        while (resultSet.next()){
+
+            bytes = resultSet.getLong("bytes");
+            listBytes.add(bytes);
+
+        }
+
+        return listBytes;
+    }
+
+    public  <E extends Long> long getAllBytes(String destport) throws SQLException {
+
+        preparedStatement = connection.prepareStatement(QUERY_SELECT_ALL_BYTES);
+        preparedStatement.setString(1, destport);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()){
 
